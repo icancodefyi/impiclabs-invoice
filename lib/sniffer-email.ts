@@ -5,10 +5,20 @@ import { statusLabel } from "@/lib/sniffer-ui"
 import type { Assignee, TaskStatus } from "@/lib/task-types"
 import { isAssignee } from "@/lib/task-types"
 
-function appOrigin(): string {
-  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim()
-  if (fromEnv) {
-    return fromEnv.replace(/\/$/, "")
+/**
+ * Base URL for links inside Sniffer notification emails.
+ * Prefer SNIFFER_PUBLIC_BASE_URL (or SNIFFER_APP_URL) on Vercel so links use your
+ * real domain (e.g. https://hq.impiclabs.com) instead of *.vercel.app deploy URLs.
+ */
+function snifferAppOrigin(): string {
+  const explicit =
+    process.env.SNIFFER_PUBLIC_BASE_URL?.trim() ?? process.env.SNIFFER_APP_URL?.trim()
+  if (explicit) {
+    return explicit.replace(/\/$/, "")
+  }
+  const site = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+  if (site) {
+    return site.replace(/\/$/, "")
   }
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL.replace(/\/$/, "")}`
@@ -103,7 +113,7 @@ export async function notifyNewTaskAssigned(params: {
     return
   }
 
-  const url = `${appOrigin()}/sniffer/tasks/${params.taskId}`
+  const url = `${snifferAppOrigin()}/sniffer/tasks/${params.taskId}`
   const assigneeBody = `Hi ${params.assignedTo},
 
 You have been assigned a new task.
@@ -150,7 +160,7 @@ export async function notifyTaskStatusChanged(params: {
     return
   }
 
-  const url = `${appOrigin()}/sniffer/tasks/${params.taskId}`
+  const url = `${snifferAppOrigin()}/sniffer/tasks/${params.taskId}`
   const fromL = statusLabel(params.fromStatus)
   const toL = statusLabel(params.toStatus)
 
@@ -198,7 +208,7 @@ export async function notifyTaskCommentPosted(params: {
     return
   }
 
-  const url = `${appOrigin()}/sniffer/tasks/${params.taskId}`
+  const url = `${snifferAppOrigin()}/sniffer/tasks/${params.taskId}`
   const excerpt =
     params.body.length > 600 ? `${params.body.slice(0, 600).trim()}…` : params.body
   const kind = params.isReply ? "Reply" : "Comment"
@@ -298,7 +308,7 @@ export async function notifyTaskDeleted(params: {
   if (!ops) {
     return
   }
-  const listUrl = `${appOrigin()}/sniffer/tasks`
+  const listUrl = `${snifferAppOrigin()}/sniffer/tasks`
   await sendViaSmtp({
     to: ops,
     subject: `[Sniffer Lab] Task deleted: ${params.title}`,
