@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
+import { scheduleNewTaskEmail } from "@/lib/sniffer-email"
 import { validateSnifferPassword } from "@/lib/sniffer-auth"
 import { isAssignee } from "@/lib/task-types"
 import { createTask, listTasks } from "@/lib/tasks-db"
@@ -47,6 +48,11 @@ export async function POST(request: NextRequest) {
       description,
       assignedTo,
       status: "todo",
+    })
+    scheduleNewTaskEmail({
+      taskId: id,
+      title,
+      assignedTo,
     })
     return NextResponse.json({ id }, { status: 201 })
   } catch (e) {

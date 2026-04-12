@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 
+import { scheduleTaskCommentEmail } from "@/lib/sniffer-email"
 import { isAssignee } from "@/lib/task-types"
-import { addTaskComment } from "@/lib/tasks-db"
+import { addTaskComment, getTaskById } from "@/lib/tasks-db"
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -42,6 +43,17 @@ export async function POST(request: Request, context: RouteContext) {
         { error: parentId ? "Task or parent comment not found" : "Task not found" },
         { status: 404 }
       )
+    }
+    const task = await getTaskById(id)
+    if (task) {
+      scheduleTaskCommentEmail({
+        taskId: id,
+        taskTitle: task.title,
+        assignedTo: task.assignedTo,
+        author,
+        body: text,
+        isReply: Boolean(parentId),
+      })
     }
     return NextResponse.json({ ok: true }, { status: 201 })
   } catch (e) {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
+import { scheduleStatusChangeEmail, scheduleTaskDeletedEmail } from "@/lib/sniffer-email"
 import { validateSnifferPassword } from "@/lib/sniffer-auth"
 import { isTaskStatus } from "@/lib/task-types"
 import { deleteTaskById, getTaskById, updateTaskStatus } from "@/lib/tasks-db"
@@ -38,10 +39,24 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   }
 
   try {
+    const existing = await getTaskById(id)
+    if (!existing) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 })
+    }
+    if (existing.status === status) {
+      return NextResponse.json({ ok: true })
+    }
     const ok = await updateTaskStatus(id, status)
     if (!ok) {
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
+    scheduleStatusChangeEmail({
+      taskId: id,
+      title: existing.title,
+      assignedTo: existing.assignedTo,
+      fromStatus: existing.status,
+      toStatus: status,
+    })
     return NextResponse.json({ ok: true })
   } catch (e) {
     const message = e instanceof Error ? e.message : "Server error"
@@ -64,10 +79,19 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
   }
 
   try {
+    const existing = await getTaskById(id)
+    if (!existing) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 })
+    }
     const ok = await deleteTaskById(id)
     if (!ok) {
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
+    scheduleTaskDeletedEmail({
+      taskId: id,
+      title: existing.title,
+      assignedTo: existing.assignedTo,
+    })
     return NextResponse.json({ ok: true })
   } catch (e) {
     const message = e instanceof Error ? e.message : "Server error"
