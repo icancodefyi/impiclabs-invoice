@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next"
 import { Plus_Jakarta_Sans, Space_Grotesk, Space_Mono } from "next/font/google"
 
+import { ViewTransitions } from "next-view-transitions"
+
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
@@ -11,7 +13,7 @@ const siteUrl =
 
 export const metadata: Metadata = {
   title: {
-    default: "Impic Invoice Studio",
+    default: "Impiclabs HQ",
     template: "%s · Impic Invoice Studio",
   },
   description: "Create A4 invoices, export PDF, and print — Impic Labs internal invoice generator.",
@@ -70,7 +72,9 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ViewTransitions>
+          <ThemeProvider>{children}</ThemeProvider>
+        </ViewTransitions>
       </body>
     </html>
   )

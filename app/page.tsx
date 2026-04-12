@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { Link as VtLink } from "next-view-transitions"
 
 import { COMPANY_DETAILS } from "@/config/company"
 
@@ -29,16 +30,16 @@ export default function HomePage() {
             </Link>
           </li>
           <li>
-            <Link
+            <VtLink
               href="/sniffer"
-              className="group block rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm transition hover:border-violet-200 hover:shadow-md"
+              className="group block touch-manipulation rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm transition hover:border-violet-200 hover:shadow-md active:scale-[0.99]"
             >
               <p className="text-lg font-semibold text-zinc-900">Tasks · Sniffer Lab</p>
               <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">
                 Team task board — browse and discuss freely; password only to add a new task
               </p>
               <p className="mt-3 text-sm font-medium text-violet-700 group-hover:underline">Open →</p>
-            </Link>
+            </VtLink>
           </li>
         </ul>
       </div>

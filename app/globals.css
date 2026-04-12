@@ -136,6 +136,28 @@
   }
 }
 
+/* View Transitions API — smoother in-app navigations (supported browsers) */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.42s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @supports (view-transition-name: none) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+.sniffer-safe-pb {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+}
+
 /* Invoice preview: content scale to fit inside A4 box. --inv-fit set inline in InvoicePreview. */
 .invoice-content-fit {
   box-sizing: border-box;

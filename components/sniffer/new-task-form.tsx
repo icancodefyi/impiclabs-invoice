@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useTransitionRouter } from "next-view-transitions"
 import * as React from "react"
 
 import { MarkdownBody } from "@/components/sniffer/markdown-body"
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ASSIGNEES } from "@/lib/task-types"
 
 export function NewTaskForm() {
-  const router = useRouter()
+  const router = useTransitionRouter()
   const [title, setTitle] = React.useState("")
   const [description, setDescription] = React.useState("")
   const [assignedTo, setAssignedTo] = React.useState<string>(ASSIGNEES[0])
@@ -33,7 +33,6 @@ export function NewTaskForm() {
       }
       if (data.id) {
         router.push(`/sniffer/tasks/${data.id}`)
-        router.refresh()
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create task")

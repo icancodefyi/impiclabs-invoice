@@ -27,29 +27,29 @@ function CommentThread({
   const replies = all.filter((c) => c.parentId === comment.id).sort(byCreatedAt)
 
   return (
-    <li className={depth > 0 ? "pt-1" : ""}>
+    <li className={depth > 0 ? "pt-0.5" : ""}>
       <div
-        className={`flex gap-3 rounded-xl border border-zinc-200/80 bg-white px-3 py-3 shadow-sm sm:px-4 sm:py-3.5 ${depth > 0 ? "bg-zinc-50/80" : ""}`}
+        className={`flex gap-3.5 rounded-2xl border border-zinc-200/70 bg-white px-4 py-3.5 shadow-[0_1px_0_rgba(0,0,0,0.02)] sm:px-5 sm:py-4 ${depth > 0 ? "bg-zinc-50/60" : ""}`}
       >
         <AssigneeAvatar name={comment.author} size={depth > 0 ? "sm" : "md"} />
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100/90 pb-2">
-            <span className="text-sm font-semibold text-zinc-900">{comment.author}</span>
-            <time className="text-xs tabular-nums text-zinc-500">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 pb-2.5">
+            <span className="text-sm font-semibold tracking-tight text-zinc-900">{comment.author}</span>
+            <time className="text-[11px] tabular-nums text-zinc-500">
               {new Date(comment.createdAt).toLocaleString(undefined, {
                 dateStyle: "medium",
                 timeStyle: "short",
               })}
             </time>
           </div>
-          <div className="pt-2.5">
+          <div className="pt-3">
             <MarkdownBody markdown={comment.body} size="sm" />
           </div>
-          <div className="mt-3">
+          <div className="mt-3.5">
             <button
               type="button"
               onClick={() => onReply(comment)}
-              className="text-xs font-medium text-violet-700 underline-offset-2 hover:underline"
+              className="rounded-lg px-2 py-1 text-xs font-medium text-violet-700 transition hover:bg-violet-50"
             >
               Reply
             </button>
@@ -58,7 +58,7 @@ function CommentThread({
       </div>
       {replies.length > 0 ? (
         <ul
-          className={`mt-3 space-y-3 ${depth === 0 ? "ml-2 border-l-2 border-violet-100 pl-4 sm:ml-3 sm:pl-5" : "ml-1 border-l border-zinc-200 pl-3 sm:ml-2 sm:pl-4"}`}
+          className={`mt-4 space-y-4 ${depth === 0 ? "ml-1 border-l-2 border-violet-200/80 pl-4 sm:ml-2 sm:pl-5" : "ml-0.5 border-l border-zinc-200/90 pl-3.5 sm:pl-4"}`}
         >
           {replies.map((r) => (
             <CommentThread key={r.id} comment={r} all={all} onReply={onReply} depth={depth + 1} />
@@ -129,20 +129,25 @@ export function TaskComments({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Discussion</h2>
-        <p className="mt-1 text-sm text-zinc-600">
-          Threaded replies · pick your name · markdown supported
+        <div className="mb-3 flex items-center gap-3">
+          <span className="h-px w-8 bg-gradient-to-r from-violet-400/80 to-transparent" aria-hidden />
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-500">
+            Discussion
+          </h2>
+        </div>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-zinc-600">
+          Threaded replies, pick your name — markdown supported.
         </p>
       </div>
 
       {initialComments.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50/80 px-4 py-10 text-center text-sm text-zinc-500">
+        <p className="rounded-2xl border border-dashed border-zinc-200/90 bg-zinc-50/50 px-5 py-12 text-center text-sm leading-relaxed text-zinc-500">
           No comments yet. Be the first to add a note.
         </p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-5">
           {topLevel.map((c) => (
             <CommentThread key={c.id} comment={c} all={initialComments} onReply={onReply} depth={0} />
           ))}
@@ -151,7 +156,7 @@ export function TaskComments({
 
       <form
         onSubmit={(e) => void onSubmit(e)}
-        className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-4 sm:p-5"
+        className="rounded-2xl border border-zinc-200/70 bg-gradient-to-b from-zinc-50/80 to-white p-5 shadow-[0_1px_0_rgba(0,0,0,0.02)] sm:p-6"
       >
         {replyingTo ? (
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-violet-50 px-3 py-2 text-sm text-violet-950 ring-1 ring-violet-200/80">
