@@ -1,4 +1,4 @@
-/** Password required only when creating a new task (API validates). */
+/** Password required when creating or deleting a task (API validates). */
 export const SNIFFER_PASSWORD =
   process.env.SNIFFER_PASSWORD ?? "zaid@impiclabs.com"
 

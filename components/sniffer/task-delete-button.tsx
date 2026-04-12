@@ -19,6 +19,17 @@ export function TaskDeleteButton({
   const [pending, setPending] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
 
+  React.useEffect(() => {
+    if (!open) {
+      return
+    }
+    const prev = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [open])
+
   function close() {
     setOpen(false)
     setPassword("")
@@ -115,7 +126,7 @@ export function TaskDeleteButton({
                 <Button
                   type="submit"
                   disabled={pending || !password}
-                  className="w-full bg-red-600 text-white hover:bg-red-700 sm:w-auto"
+                  className="w-full border-transparent bg-red-600 text-white hover:bg-red-700 sm:w-auto"
                 >
                   {pending ? "Deleting…" : "Delete task"}
                 </Button>
