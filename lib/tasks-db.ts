@@ -130,6 +130,15 @@ export async function updateTaskStatus(id: string, status: TaskStatus): Promise<
   return result.matchedCount > 0
 }
 
+export async function deleteTaskById(id: string): Promise<boolean> {
+  if (!ObjectId.isValid(id)) {
+    return false
+  }
+  const db = await getDb()
+  const result = await db.collection(COLL).deleteOne({ _id: new ObjectId(id) })
+  return result.deletedCount > 0
+}
+
 export async function addTaskComment(
   taskId: string,
   input: { author: string; body: string; parentId?: string | null }
