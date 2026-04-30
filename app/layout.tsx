@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: "Impic Invoice Studio",
   robots: { index: false, follow: false },
+  icons: {
+    apple: "/assets/logowbg.png",
+    icon: "/assets/logowbg.png",
+  },
   openGraph: {
     type: "website",
     title: "Impic Invoice Studio",
