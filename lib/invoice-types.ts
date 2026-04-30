@@ -37,6 +37,7 @@ export type InvoiceState = {
   items: InvoiceItem[]
   summary: InvoiceSummary
   notes: InvoiceNotes
+  selectedBank: number
 }
 
 export type Totals = {

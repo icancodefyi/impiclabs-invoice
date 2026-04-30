@@ -6,6 +6,7 @@ import { InvoiceTable } from "@/components/invoice/InvoiceTable"
 import { NotesSection } from "@/components/invoice/NotesSection"
 import type { InvoiceItem, InvoiceState } from "@/lib/invoice-types"
 import { Button } from "@/components/ui/button"
+import { BANK_ACCOUNTS } from "@/config/company"
 
 type InvoiceFormProps = {
   state: InvoiceState
@@ -14,6 +15,7 @@ type InvoiceFormProps = {
   onUpdateMeta: (field: keyof InvoiceState["meta"], value: string) => void
   onUpdateSummary: (field: keyof InvoiceState["summary"], value: number | boolean) => void
   onUpdateNotes: (field: keyof InvoiceState["notes"], value: string) => void
+  onUpdateBank: (index: number) => void
   onAddItem: () => void
   onRemoveItem: (id: string) => void
   onUpdateItem: (id: string, field: keyof Omit<InvoiceItem, "id">, value: string | number) => void
@@ -26,6 +28,7 @@ export function InvoiceForm({
   onUpdateMeta,
   onUpdateSummary,
   onUpdateNotes,
+  onUpdateBank,
   onAddItem,
   onRemoveItem,
   onUpdateItem,
@@ -192,6 +195,30 @@ export function InvoiceForm({
         onChangeNotes={(value) => onUpdateNotes("notes", value)}
         onChangePaymentTerms={(value) => onUpdateNotes("paymentTerms", value)}
       />
+
+      <section className="rounded-2xl border border-black/10 bg-white p-4 shadow-sm">
+        <h3 className="mb-3 text-sm font-semibold tracking-tight text-black">Bank Account</h3>
+        <div className="flex flex-col gap-2">
+          {BANK_ACCOUNTS.map((bank, index) => (
+            <label
+              key={index}
+              className="flex cursor-pointer items-center gap-3 rounded-lg border border-black/10 bg-zinc-50 px-3 py-2.5 text-sm has-[:checked]:border-[#6C5CE7] has-[:checked]:bg-[#6C5CE7]/5"
+            >
+              <input
+                type="radio"
+                name="selectedBank"
+                checked={state.selectedBank === index}
+                onChange={() => onUpdateBank(index)}
+                className="accent-[#6C5CE7]"
+              />
+              <span className="font-medium text-black">{bank.bankName}</span>
+              {bank.accountNumber ? (
+                <span className="ml-auto text-xs text-black/45">{bank.accountNumber}</span>
+              ) : null}
+            </label>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }

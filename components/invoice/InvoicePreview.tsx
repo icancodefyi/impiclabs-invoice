@@ -5,7 +5,7 @@ import Image from "next/image"
 
 import { PaymentSection } from "@/components/invoice/PaymentSection"
 import { A4_HEIGHT_PX, A4_WIDTH_PX } from "@/lib/a4"
-import { BRAND, COMPANY_DETAILS } from "@/config/company"
+import { BANK_ACCOUNTS, BRAND, COMPANY_DETAILS } from "@/config/company"
 import { calculateItemTotal, calculateTotals } from "@/lib/calculateTotals"
 import { formatCurrency } from "@/lib/formatCurrency"
 import type { InvoiceItem, InvoiceState } from "@/lib/invoice-types"
@@ -129,7 +129,7 @@ function InvoicePageBody({
       <header className="border-b border-black/15 pb-5">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <Image src="/assets/logo.png" alt="Company logo" width={66} height={66} className="shrink-0" />
+            <Image src="/assets/parent.png" alt="Company logo" width={66} height={66} className="shrink-0" />
             <div className="min-w-0">
               <h1
                 className="text-[34px] leading-none font-bold tracking-tight sm:text-[38px]"
@@ -167,14 +167,22 @@ function InvoicePageBody({
       <section className="grid grid-cols-1 gap-6 py-4 sm:grid-cols-[1.1fr_1fr] sm:gap-8 sm:py-5">
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-black/35">Bill To</p>
-          <p className="mt-2 text-[17px] font-semibold leading-snug text-black sm:text-[18px]">
-            {state.client.name || "Client Name"}
-          </p>
-          <p className="mt-1 text-[13px] text-black/75">{state.client.companyName || "Client Company"}</p>
-          <p className="mt-2 text-[12px] text-black/72">{state.client.email || "client@company.com"}</p>
-          <p className="mt-1 whitespace-pre-wrap break-words text-[12px] leading-relaxed text-black/72">
-            {state.client.address || "Address"}
-          </p>
+          {state.client.name ? (
+            <p className="mt-2 text-[17px] font-semibold leading-snug text-black sm:text-[18px]">
+              {state.client.name}
+            </p>
+          ) : null}
+          {state.client.companyName ? (
+            <p className="mt-1 text-[13px] text-black/75">{state.client.companyName}</p>
+          ) : null}
+          {state.client.email ? (
+            <p className="mt-2 text-[12px] text-black/72">{state.client.email}</p>
+          ) : null}
+          {state.client.address ? (
+            <p className="mt-1 whitespace-pre-wrap break-words text-[12px] leading-relaxed text-black/72">
+              {state.client.address}
+            </p>
+          ) : null}
         </div>
 
         <div className="min-w-0 text-left sm:text-right">
@@ -282,7 +290,7 @@ function InvoicePageBody({
       </section>
 
       <section className="mt-4 border-t border-black/15 pt-3 sm:mt-5 sm:pt-4">
-        <PaymentSection compact />
+        <PaymentSection compact bank={BANK_ACCOUNTS[state.selectedBank]} />
       </section>
     </>
   )

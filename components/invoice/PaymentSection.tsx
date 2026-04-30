@@ -1,17 +1,18 @@
 import Image from "next/image"
 
-import { BANK_DETAILS } from "@/config/company"
+import type { BankAccount } from "@/config/company"
 
 type PaymentSectionProps = {
   compact?: boolean
+  bank: BankAccount
 }
 
-export function PaymentSection({ compact = false }: PaymentSectionProps) {
+export function PaymentSection({ compact = false, bank }: PaymentSectionProps) {
   return (
     <div>
       <div className="mb-5 flex items-center gap-3">
         <Image
-          src="/payments/bank-logo.png"
+          src={bank.logo}
           alt="Bank logo"
           width={30}
           height={30}
@@ -27,31 +28,31 @@ export function PaymentSection({ compact = false }: PaymentSectionProps) {
         <div className="grid gap-4">
           <p className="text-[12px] text-black/70">
             <span className="mr-2 font-semibold uppercase tracking-[0.12em] text-black/35">Account</span>
-            {BANK_DETAILS.accountName}
+            {bank.accountName}
           </p>
           <p className="text-[12px] text-black/70">
             <span className="mr-2 font-semibold uppercase tracking-[0.12em] text-black/35">A/C No</span>
-            {BANK_DETAILS.accountNumber}
+            {bank.accountNumber}
           </p>
           <p className="text-[12px] text-black/70">
             <span className="mr-2 font-semibold uppercase tracking-[0.12em] text-black/35">IFSC</span>
-            {BANK_DETAILS.ifsc}
+            {bank.ifsc}
           </p>
           <p className="text-[12px] text-black/70">
             <span className="mr-2 font-semibold uppercase tracking-[0.12em] text-black/35">Bank</span>
-            {BANK_DETAILS.bankName}
+            {bank.bankName}
           </p>
-          {BANK_DETAILS.upiId ? (
+          {bank.upiId ? (
             <p className="text-[12px] text-black/70">
               <span className="mr-2 font-semibold uppercase tracking-[0.12em] text-black/35">UPI ID</span>
-              {BANK_DETAILS.upiId}
+              {bank.upiId}
             </p>
           ) : null}
         </div>
 
         <div className="justify-self-end pt-1 text-center">
           <Image
-            src="/payments/upi-qr.png"
+            src={bank.qr}
             alt="UPI QR code"
             width={compact ? 122 : 166}
             height={compact ? 122 : 166}

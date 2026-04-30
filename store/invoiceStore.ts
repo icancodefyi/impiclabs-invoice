@@ -47,6 +47,7 @@ function getInitialState(): InvoiceState {
       notes: "Thank you for trusting Impic Labs. We appreciate your business.",
       paymentTerms: "Payment due within 14 days from issue date.",
     },
+    selectedBank: 0,
   }
 }
 
@@ -137,6 +138,10 @@ export function useInvoiceStore() {
     []
   )
 
+  const updateBank = React.useCallback((index: number) => {
+    setState((prev) => ({ ...prev, selectedBank: index }))
+  }, [])
+
   return {
     state,
     resetState,
@@ -144,6 +149,7 @@ export function useInvoiceStore() {
     updateMeta,
     updateSummary,
     updateNotes,
+    updateBank,
     addItem,
     removeItem,
     updateItem,

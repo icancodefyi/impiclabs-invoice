@@ -23,6 +23,7 @@ export default function InvoicePage() {
     updateMeta,
     updateSummary,
     updateNotes,
+    updateBank,
     addItem,
     removeItem,
     updateItem,
@@ -109,6 +110,7 @@ export default function InvoicePage() {
               onUpdateMeta={updateMeta}
               onUpdateSummary={updateSummary}
               onUpdateNotes={updateNotes}
+              onUpdateBank={updateBank}
               onAddItem={addItem}
               onRemoveItem={removeItem}
               onUpdateItem={updateItem}
