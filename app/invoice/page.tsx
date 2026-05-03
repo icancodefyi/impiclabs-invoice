@@ -3,11 +3,10 @@
 import * as React from "react"
 import Image from "next/image"
 import { Link } from "next-view-transitions"
-import { IconDownload, IconPrinter, IconHome, IconChevronRight, IconFileInvoice, IconEye, IconEdit } from "@tabler/icons-react"
+import { IconDownload, IconPrinter, IconHome, IconChevronRight, IconEye, IconEdit } from "@tabler/icons-react"
 
 import { InvoiceForm } from "@/components/invoice/InvoiceForm"
 import { InvoicePreview } from "@/components/invoice/InvoicePreview"
-import { BRAND, COMPANY_DETAILS } from "@/config/company"
 import { exportElementToA4Pdf } from "@/lib/exportPdf"
 import { Button } from "@/components/ui/button"
 import { useInvoiceStore } from "@/store/invoiceStore"
@@ -89,56 +88,17 @@ export default function InvoicePage() {
             <div className="rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
               <Image src="/assets/logo.png" alt="Impic Labs" width={20} height={20} />
             </div>
-            <div className="hidden sm:block">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.22em]" style={{ color: BRAND.accentColor }}>
-                {COMPANY_DETAILS.name}
-              </p>
-              <p className="text-sm font-bold leading-none text-slate-900">Invoice Studio</p>
-            </div>
-            <p className="text-sm font-bold text-slate-900 sm:hidden">Invoice Studio</p>
+            <p className="text-sm font-bold text-slate-900">Invoice Studio</p>
           </div>
 
-          {/* Mobile tab toggle */}
-          <div className="ml-auto flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 lg:hidden">
-            <button
-              onClick={() => setMobileTab("form")}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${mobileTab === "form" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
-            >
-              <IconEdit size={13} stroke={2} /> Edit
-            </button>
-            <button
-              onClick={() => setMobileTab("preview")}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${mobileTab === "preview" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
-            >
-              <IconEye size={13} stroke={2} /> Preview
-            </button>
-          </div>
+          {/* Right side: actions + tab toggle */}
+          <div className="ml-auto flex items-center gap-2">
 
-          {/* Actions */}
-          <div className="ml-auto hidden items-center gap-2 lg:flex">
-            <Button
-              type="button" variant="outline" size="sm"
-              className="h-8 border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-              onClick={handlePrint}
-            >
-              <IconPrinter size={14} stroke={2} /> Print
-            </Button>
-            <Button
-              type="button" size="sm"
-              className="h-8 bg-slate-900 text-white hover:bg-slate-800"
-              onClick={handleExportPdf}
-              disabled={isExporting}
-            >
-              <IconDownload size={14} stroke={2} />
-              {isExporting ? "Exporting..." : "Export PDF"}
-            </Button>
-          </div>
-
-          {/* Mobile export */}
-          <div className="flex items-center gap-1.5 lg:hidden">
+            {/* Print + PDF — always visible */}
             <button
               onClick={handlePrint}
               className="flex size-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50"
+              title="Print"
             >
               <IconPrinter size={15} stroke={2} />
             </button>
@@ -148,8 +108,27 @@ export default function InvoicePage() {
               className="flex h-8 items-center gap-1.5 rounded-lg bg-slate-900 px-3 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50"
             >
               <IconDownload size={13} stroke={2} />
-              PDF
+              <span className="hidden sm:inline">{isExporting ? "Exporting..." : "Export PDF"}</span>
+              <span className="sm:hidden">PDF</span>
             </button>
+
+            {/* Mobile tab toggle */}
+            <div className="flex items-center gap-0.5 rounded-xl border border-slate-200 bg-slate-100 p-1 lg:hidden">
+              <button
+                onClick={() => setMobileTab("form")}
+                className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${mobileTab === "form" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
+              >
+                <IconEdit size={13} stroke={2} />
+                <span className="hidden sm:inline">Edit</span>
+              </button>
+              <button
+                onClick={() => setMobileTab("preview")}
+                className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${mobileTab === "preview" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
+              >
+                <IconEye size={13} stroke={2} />
+                <span className="hidden sm:inline">Preview</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
