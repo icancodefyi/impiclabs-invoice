@@ -3,6 +3,17 @@
 import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
+import {
+  IconHome,
+  IconChevronRight,
+  IconArrowUpRight,
+  IconArrowDownRight,
+  IconPlus,
+  IconX,
+  IconTrash,
+  IconFilter,
+  IconInbox,
+} from "@tabler/icons-react"
 
 import { BANKS, INCOME_CATEGORIES, EXPENSE_CATEGORIES, type Transaction } from "@/lib/finance-types"
 import { formatCurrency } from "@/lib/formatCurrency"
@@ -16,8 +27,13 @@ const EMPTY_FORM = {
   date: new Date().toISOString().split("T")[0],
 }
 
-const inputCls = "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-300 focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
+const inputCls =
+  "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-300 focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
 const labelCls = "block space-y-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400"
+
+function Skeleton({ className }: { className?: string }) {
+  return <div className={`animate-pulse rounded-xl bg-slate-100 ${className}`} />
+}
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = React.useState<Transaction[]>([])
@@ -30,6 +46,7 @@ export default function TransactionsPage() {
   const [showForm, setShowForm] = React.useState(false)
 
   const categories = form.type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES
+  const hasFilters = filterType || filterBank || filterMonth
 
   function fetchTransactions() {
     setLoading(true)
@@ -68,42 +85,49 @@ export default function TransactionsPage() {
   const totalExpense = transactions.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0)
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/40">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
 
-      {/* Top nav */}
-      <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm">
-              <Image src="/assets/logo.png" alt="Impic Labs" width={28} height={28} />
+      {/* Sticky nav */}
+      <header className="sticky top-0 z-20 border-b border-slate-100 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex max-w-4xl items-center gap-2 px-4 py-3 sm:px-6">
+
+          {/* Breadcrumb */}
+          <Link href="/" className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800">
+            <IconHome size={14} stroke={2} />
+            <span className="hidden sm:inline">Home</span>
+          </Link>
+          <IconChevronRight size={13} className="text-slate-300" stroke={2} />
+          <Link href="/finance" className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800">
+            <div className="rounded-md border border-slate-200 bg-white p-0.5">
+              <Image src="/assets/logo.png" alt="Impic Labs" width={16} height={16} />
             </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-violet-500">Finance</p>
-              <p className="text-sm font-bold text-slate-900">Transactions</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              href="/finance"
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-slate-300 sm:px-4 sm:text-sm"
-            >
-              ← Dashboard
-            </Link>
-            <button
-              onClick={() => setShowForm((v) => !v)}
-              className={`rounded-xl px-3 py-1.5 text-xs font-semibold shadow-sm transition sm:px-4 sm:text-sm ${
-                showForm
-                  ? "border border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-                  : "bg-slate-900 text-white hover:bg-slate-800"
-              }`}
-            >
-              {showForm ? "Cancel" : "+ Add"}
-            </button>
-          </div>
+            <span className="hidden sm:inline">Finance</span>
+          </Link>
+          <IconChevronRight size={13} className="text-slate-300" stroke={2} />
+          <span className="text-sm font-bold text-slate-900">Transactions</span>
+
+          {/* Add button */}
+          <button
+            onClick={() => setShowForm((v) => !v)}
+            className={`ml-auto flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold shadow-sm transition sm:px-4 sm:text-sm ${
+              showForm
+                ? "border border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                : "bg-slate-900 text-white hover:bg-slate-800"
+            }`}
+          >
+            {showForm ? <IconX size={14} stroke={2.5} /> : <IconPlus size={14} stroke={2.5} />}
+            {showForm ? "Cancel" : "Add"}
+          </button>
         </div>
       </header>
 
-      <div className="mx-auto max-w-4xl space-y-5 px-4 py-5 sm:px-6 sm:py-6">
+      <div className="mx-auto max-w-4xl space-y-5 px-4 py-5 sm:px-6 sm:py-7">
+
+        {/* Page title */}
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Finance</p>
+          <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">Transactions</h2>
+        </div>
 
         {/* Add form */}
         {showForm ? (
@@ -112,13 +136,13 @@ export default function TransactionsPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
 
               {/* Type toggle */}
-              <div className="flex gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {(["income", "expense"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setForm((f) => ({ ...f, type: t, category: (t === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES)[0] }))}
-                    className={`flex-1 rounded-xl py-2.5 text-sm font-semibold capitalize transition-all ${
+                    className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-all ${
                       form.type === t
                         ? t === "income"
                           ? "bg-emerald-500 text-white shadow-sm"
@@ -126,7 +150,11 @@ export default function TransactionsPage() {
                         : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
                     }`}
                   >
-                    {t === "income" ? "↑ Income" : "↓ Expense"}
+                    {t === "income"
+                      ? <IconArrowUpRight size={16} stroke={2.5} />
+                      : <IconArrowDownRight size={16} stroke={2.5} />
+                    }
+                    {t === "income" ? "Income" : "Expense"}
                   </button>
                 ))}
               </div>
@@ -134,50 +162,46 @@ export default function TransactionsPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className={labelCls}>
                   Amount (₹)
-                  <input
-                    type="number" min={1} value={form.amount} required
+                  <input type="number" min={1} value={form.amount} required
                     onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
-                    className={inputCls} placeholder="0.00"
-                  />
+                    className={inputCls} placeholder="0.00" />
                 </label>
 
                 <label className={labelCls}>
                   Date
-                  <input
-                    type="date" value={form.date} required
+                  <input type="date" value={form.date} required
                     onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                    className={inputCls}
-                  />
+                    className={inputCls} />
                 </label>
 
                 <label className={labelCls}>
                   Category
-                  <select value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} className={inputCls}>
+                  <select value={form.category}
+                    onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                    className={inputCls}>
                     {categories.map((c) => <option key={c}>{c}</option>)}
                   </select>
                 </label>
 
                 <label className={labelCls}>
                   Bank Account
-                  <select value={form.bank} onChange={(e) => setForm((f) => ({ ...f, bank: e.target.value }))} className={inputCls}>
+                  <select value={form.bank}
+                    onChange={(e) => setForm((f) => ({ ...f, bank: e.target.value }))}
+                    className={inputCls}>
                     {BANKS.map((b) => <option key={b}>{b}</option>)}
                   </select>
                 </label>
 
                 <label className={`${labelCls} sm:col-span-2`}>
                   Description
-                  <input
-                    type="text" value={form.description}
+                  <input type="text" value={form.description}
                     onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                    className={inputCls} placeholder="Optional note"
-                  />
+                    className={inputCls} placeholder="Optional note" />
                 </label>
               </div>
 
-              <button
-                type="submit" disabled={saving}
-                className="w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-40"
-              >
+              <button type="submit" disabled={saving}
+                className="w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-40">
                 {saving ? "Saving..." : "Save Transaction"}
               </button>
             </form>
@@ -186,13 +210,15 @@ export default function TransactionsPage() {
 
         {/* Summary strip */}
         {!loading && transactions.length > 0 ? (
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2.5">
             <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-2">
-              <span className="text-xs font-semibold text-emerald-600">↑ In</span>
+              <IconArrowUpRight size={14} className="text-emerald-600" stroke={2.5} />
+              <span className="text-xs font-semibold text-emerald-600">Income</span>
               <span className="text-sm font-bold text-emerald-700">{formatCurrency(totalIncome)}</span>
             </div>
             <div className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-2">
-              <span className="text-xs font-semibold text-red-500">↓ Out</span>
+              <IconArrowDownRight size={14} className="text-red-500" stroke={2.5} />
+              <span className="text-xs font-semibold text-red-500">Expenses</span>
               <span className="text-sm font-bold text-red-600">{formatCurrency(totalExpense)}</span>
             </div>
             <div className="flex items-center gap-2 rounded-xl border border-violet-100 bg-violet-50 px-4 py-2">
@@ -205,28 +231,30 @@ export default function TransactionsPage() {
         ) : null}
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-2">
-          {[
-            <select key="type" value={filterType} onChange={(e) => setFilterType(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-violet-400">
-              <option value="">All Types</option>
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>,
-            <select key="bank" value={filterBank} onChange={(e) => setFilterBank(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-violet-400">
-              <option value="">All Banks</option>
-              {BANKS.map((b) => <option key={b}>{b}</option>)}
-            </select>,
-            <input key="month" type="month" value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-violet-400" />,
-          ]}
-          {(filterType || filterBank || filterMonth) ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <IconFilter size={13} stroke={2} />
+            <span>Filter</span>
+          </div>
+          <select value={filterType} onChange={(e) => setFilterType(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-violet-400">
+            <option value="">All Types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <select value={filterBank} onChange={(e) => setFilterBank(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-violet-400">
+            <option value="">All Banks</option>
+            {BANKS.map((b) => <option key={b}>{b}</option>)}
+          </select>
+          <input type="month" value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-violet-400" />
+          {hasFilters ? (
             <button
               onClick={() => { setFilterType(""); setFilterBank(""); setFilterMonth("") }}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 shadow-sm transition hover:border-slate-300 hover:text-slate-800"
+              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
             >
-              Clear
+              <IconX size={13} stroke={2.5} /> Clear
             </button>
           ) : null}
         </div>
@@ -234,22 +262,30 @@ export default function TransactionsPage() {
         {/* List */}
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           {loading ? (
-            <div className="space-y-px p-2">
-              {[1,2,3,4,5].map(i => <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />)}
+            <div className="space-y-px p-3">
+              {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-14 w-full" />)}
             </div>
           ) : transactions.length === 0 ? (
-            <div className="py-16 text-center">
-              <p className="text-2xl">📭</p>
-              <p className="mt-2 text-sm font-medium text-slate-400">No transactions found</p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="mb-3 flex size-12 items-center justify-center rounded-2xl bg-slate-100">
+                <IconInbox size={22} className="text-slate-300" stroke={1.5} />
+              </div>
+              <p className="text-sm font-semibold text-slate-500">No transactions found</p>
+              <p className="mt-1 text-xs text-slate-400">
+                {hasFilters ? "Try adjusting your filters" : "Add your first transaction above"}
+              </p>
             </div>
           ) : (
             <div className="divide-y divide-slate-100">
               {transactions.map((t) => (
                 <div key={t._id} className="group flex items-center gap-3 px-4 py-3.5 transition hover:bg-slate-50 sm:gap-4 sm:px-5">
-                  <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${
-                    t.type === "income" ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-500"
+                  <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${
+                    t.type === "income" ? "bg-emerald-50" : "bg-red-50"
                   }`}>
-                    {t.type === "income" ? "↑" : "↓"}
+                    {t.type === "income"
+                      ? <IconArrowUpRight size={16} className="text-emerald-600" stroke={2.5} />
+                      : <IconArrowDownRight size={16} className="text-red-500" stroke={2.5} />
+                    }
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-slate-800">{t.description || t.category}</p>
@@ -263,9 +299,7 @@ export default function TransactionsPage() {
                     className="shrink-0 rounded-lg p-1.5 text-slate-300 opacity-0 transition hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
                     title="Delete"
                   >
-                    <svg className="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <IconTrash size={14} stroke={2} />
                   </button>
                 </div>
               ))}
