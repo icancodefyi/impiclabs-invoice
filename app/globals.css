@@ -173,98 +173,47 @@
     margin: 12mm;
   }
 
+  /* Reset layout constraints that break print */
   html,
   body {
     height: auto !important;
+    overflow: visible !important;
     background: #fff !important;
-    color: #000 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  .no-print {
+  /* Hide everything except the invoice sheet */
+  body > * {
     display: none !important;
   }
 
-  .app-shell {
-    min-height: 0 !important;
-    padding: 0 !important;
-    background: #fff !important;
-  }
-
-  .invoice-preview-section {
-    max-width: none !important;
-    border: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-  }
-
-  .invoice-preview-viewport {
-    width: 100% !important;
-    max-width: none !important;
-    min-width: 0 !important;
-    overflow: visible !important;
-  }
-
-  .invoice-preview-frame {
-    height: auto !important;
-    min-height: 0 !important;
-    display: block !important;
-    margin: 0 !important;
-    width: 100% !important;
-  }
-
   .invoice-a4-sheet {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
     width: 100% !important;
     height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
     overflow: visible !important;
     box-shadow: none !important;
-    break-inside: avoid;
-    page-break-inside: avoid;
+    background: #fff !important;
+    z-index: 99999 !important;
   }
 
   .invoice-content-fit {
-    --inv-fit: 1 !important;
     transform: none !important;
-    transform-origin: top left !important;
     width: 100% !important;
     height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
+    overflow: visible !important;
   }
 
-  /* Avoid % height collapse and squashed text in tables */
   .invoice-a4-sheet table {
     table-layout: auto !important;
     width: 100% !important;
   }
 
-  .invoice-a4-sheet th,
-  .invoice-a4-sheet td {
-    word-spacing: normal !important;
-    letter-spacing: normal !important;
-  }
-
-  .invoice-a4-sheet p,
-  .invoice-a4-sheet li,
-  .invoice-a4-sheet td {
-    word-spacing: normal !important;
-    orphans: 2;
-    widows: 2;
-  }
-
-  /* leading-none + large type overlaps in print engines */
   .invoice-a4-sheet .leading-none {
     line-height: 1.2 !important;
-  }
-
-  .invoice-a4-sheet h1.leading-none {
-    line-height: 1.1 !important;
   }
 
   .invoice-a4-sheet .truncate {

@@ -74,36 +74,24 @@ export function InvoicePreview({ state, previewRef }: InvoicePreviewProps) {
   const fitScale = useContentFitScale(measureRef)
 
   return (
-    <div className="invoice-preview-viewport w-full min-w-0 overflow-x-auto overflow-y-visible py-2 touch-pan-x [-webkit-overflow-scrolling:touch]">
-      <div className="invoice-preview-frame mx-auto flex w-max max-w-none justify-center">
-        <div
-          ref={previewRef}
-          data-pdf-page="true"
-          className="invoice-a4-sheet box-border overflow-hidden bg-white text-black shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
-          style={{
-            width: A4_WIDTH_PX,
-            height: A4_HEIGHT_PX,
-          }}
-        >
-          <div
-            ref={measureRef}
-            className="invoice-content-fit box-border bg-white px-8 py-7"
-            style={
-              {
-                width: A4_WIDTH_PX,
-                ["--inv-fit"]: String(fitScale),
-              } as React.CSSProperties
-            }
-          >
-            <InvoicePageBody
-              state={state}
-              items={state.items}
-              notesLines={notesLines}
-              paymentTermsLines={paymentTermsLines}
-              totals={totals}
-            />
-          </div>
-        </div>
+    <div
+      ref={previewRef}
+      data-pdf-page="true"
+      className="invoice-a4-sheet box-border overflow-hidden bg-white text-black shadow-[0_8px_40px_rgba(0,0,0,0.12)]"
+      style={{ width: A4_WIDTH_PX, height: A4_HEIGHT_PX }}
+    >
+      <div
+        ref={measureRef}
+        className="invoice-content-fit box-border bg-white px-8 py-7"
+        style={{ width: A4_WIDTH_PX, ["--inv-fit"]: String(fitScale) } as React.CSSProperties}
+      >
+        <InvoicePageBody
+          state={state}
+          items={state.items}
+          notesLines={notesLines}
+          paymentTermsLines={paymentTermsLines}
+          totals={totals}
+        />
       </div>
     </div>
   )

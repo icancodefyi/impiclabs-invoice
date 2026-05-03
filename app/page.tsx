@@ -51,7 +51,7 @@ export default function HomePage() {
       <header className="border-b border-slate-100 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3 sm:px-6">
           <div className="rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm">
-            <Image src="/assets/logo.png" alt="Impic Labs" width={26} height={26} priority />
+            <Image src="/assets/parent.png" alt="Impic Labs" width={26} height={26} priority />
           </div>
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-violet-500">
@@ -68,7 +68,7 @@ export default function HomePage() {
 
           <div className="mb-10 text-center sm:mb-12">
             <div className="mb-5 inline-flex rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm">
-              <Image src="/assets/logo.png" alt="Impic Labs" width={44} height={44} priority />
+              <Image src="/assets/parent.png" alt="Impic Labs" width={44} height={44} priority />
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-[2.25rem]">
               Internal HQ

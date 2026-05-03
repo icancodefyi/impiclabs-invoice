@@ -3,7 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import { Link } from "next-view-transitions"
-import { IconDownload, IconPrinter } from "@tabler/icons-react"
+import { IconDownload, IconPrinter, IconHome, IconChevronRight, IconFileInvoice, IconEye, IconEdit } from "@tabler/icons-react"
 
 import { InvoiceForm } from "@/components/invoice/InvoiceForm"
 import { InvoicePreview } from "@/components/invoice/InvoicePreview"
@@ -15,25 +15,16 @@ import { useInvoiceStore } from "@/store/invoiceStore"
 export default function InvoicePage() {
   const previewRef = React.useRef<HTMLDivElement>(null)
   const [isExporting, setIsExporting] = React.useState(false)
+  const [mobileTab, setMobileTab] = React.useState<"form" | "preview">("form")
 
   const {
-    state,
-    resetState,
-    updateClient,
-    updateMeta,
-    updateSummary,
-    updateNotes,
-    updateBank,
-    addItem,
-    removeItem,
-    updateItem,
+    state, resetState, updateClient, updateMeta,
+    updateSummary, updateNotes, updateBank,
+    addItem, removeItem, updateItem,
   } = useInvoiceStore()
 
   async function handleExportPdf() {
-    if (!previewRef.current) {
-      return
-    }
-
+    if (!previewRef.current) return
     try {
       setIsExporting(true)
       await exportElementToA4Pdf(previewRef.current, {
@@ -45,64 +36,130 @@ export default function InvoicePage() {
   }
 
   function handlePrint() {
-    window.print()
+    if (!previewRef.current) return
+    const win = window.open("", "_blank", "width=900,height=1200")
+    if (!win) return
+
+    // Collect all CSS from current page (includes Next.js inlined font faces)
+    const styleBlocks = Array.from(document.querySelectorAll("style"))
+      .map((s) => s.innerHTML)
+      .join("\n")
+    const linkHrefs = Array.from(document.querySelectorAll("link[rel='stylesheet']" ))
+      .map((l) => `<link rel="stylesheet" href="${(l as HTMLLinkElement).href}">`)
+      .join("\n")
+
+    const html = previewRef.current.outerHTML
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"/>
+      ${linkHrefs}
+      <style>
+        @page { size: A4 portrait; margin: 12mm; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { margin: 0; padding: 0; background: #fff; }
+        .invoice-a4-sheet { width: 100% !important; height: auto !important; overflow: visible !important; box-shadow: none !important; }
+        .invoice-content-fit { transform: none !important; width: 100% !important; height: auto !important; overflow: visible !important; }
+        .leading-none { line-height: 1.2 !important; }
+        .truncate { overflow: visible !important; text-overflow: clip !important; white-space: normal !important; }
+        ${styleBlocks}
+      </style>
+    </head><body>${html}</body></html>`)
+    win.document.close()
+    win.focus()
+    win.onload = () => {
+      win.document.fonts.ready.then(() => {
+        win.print()
+        win.close()
+      })
+    }
   }
 
   return (
-    <main className="app-shell min-h-screen bg-[radial-gradient(circle_at_top,#ffffff_0%,#f4f4f5_44%,#ececf0_100%)] px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-6">
-      <section className="mx-auto max-w-[1600px] min-w-0">
-        <header className="no-print mb-4 rounded-3xl border border-black/10 bg-white/90 p-4 shadow-sm backdrop-blur md:p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="rounded-xl border border-black/10 bg-white p-2">
-                <Image src="/assets/logo.png" alt="Impic Labs logo" width={34} height={34} />
-              </div>
-              <div>
-                <p
-                  className="text-[10px] font-semibold uppercase tracking-[0.24em]"
-                  style={{ color: BRAND.accentColor }}
-                >
-                  Internal Tool
-                </p>
-                <h1 className="text-lg font-bold tracking-tight text-black md:text-xl">
-                  Impic Invoice Studio
-                </h1>
-                <p className="text-xs text-black/60">{COMPANY_DETAILS.name} invoice generator</p>
-              </div>
-            </div>
+    <div className="flex h-screen flex-col overflow-hidden bg-slate-100">
 
-            <div className="flex w-full flex-wrap items-center justify-end gap-3 sm:w-auto">
-              <Link
-                href="/"
-                className="text-sm font-medium text-black/60 underline-offset-2 hover:text-black hover:underline"
-              >
-                Home
-              </Link>
-              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="min-h-11 w-full border-black/20 bg-white text-black hover:bg-zinc-100 sm:min-h-9 sm:w-auto"
-                  onClick={handlePrint}
-                >
-                  <IconPrinter className="size-4" /> Print
-                </Button>
-                <Button
-                  type="button"
-                  className="min-h-11 w-full bg-black text-white hover:bg-black/85 sm:min-h-9 sm:w-auto"
-                  onClick={handleExportPdf}
-                  disabled={isExporting}
-                >
-                  <IconDownload className="size-4" />
-                  {isExporting ? "Exporting..." : "Export A4 PDF"}
-                </Button>
-              </div>
+      {/* ── Top nav ── */}
+      <header className="no-print z-20 shrink-0 border-b border-slate-200 bg-white shadow-sm">
+        <div className="flex h-14 items-center gap-2 px-3 sm:px-5">
+
+          {/* Breadcrumb */}
+          <Link href="/" className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800">
+            <IconHome size={14} stroke={2} />
+            <span className="hidden sm:inline">Home</span>
+          </Link>
+          <IconChevronRight size={13} className="shrink-0 text-slate-300" stroke={2} />
+          <div className="flex items-center gap-2">
+            <div className="rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
+              <Image src="/assets/logo.png" alt="Impic Labs" width={20} height={20} />
             </div>
+            <div className="hidden sm:block">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.22em]" style={{ color: BRAND.accentColor }}>
+                {COMPANY_DETAILS.name}
+              </p>
+              <p className="text-sm font-bold leading-none text-slate-900">Invoice Studio</p>
+            </div>
+            <p className="text-sm font-bold text-slate-900 sm:hidden">Invoice Studio</p>
           </div>
-        </header>
 
-        <div className="grid min-w-0 gap-4 xl:grid-cols-[1.08fr_1fr]">
-          <aside className="no-print min-h-0 overflow-y-auto rounded-3xl border border-black/10 bg-white/75 p-3 backdrop-blur md:p-4 xl:max-h-[calc(100vh-7rem)]">
+          {/* Mobile tab toggle */}
+          <div className="ml-auto flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 lg:hidden">
+            <button
+              onClick={() => setMobileTab("form")}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${mobileTab === "form" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
+            >
+              <IconEdit size={13} stroke={2} /> Edit
+            </button>
+            <button
+              onClick={() => setMobileTab("preview")}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${mobileTab === "preview" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
+            >
+              <IconEye size={13} stroke={2} /> Preview
+            </button>
+          </div>
+
+          {/* Actions */}
+          <div className="ml-auto hidden items-center gap-2 lg:flex">
+            <Button
+              type="button" variant="outline" size="sm"
+              className="h-8 border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              onClick={handlePrint}
+            >
+              <IconPrinter size={14} stroke={2} /> Print
+            </Button>
+            <Button
+              type="button" size="sm"
+              className="h-8 bg-slate-900 text-white hover:bg-slate-800"
+              onClick={handleExportPdf}
+              disabled={isExporting}
+            >
+              <IconDownload size={14} stroke={2} />
+              {isExporting ? "Exporting..." : "Export PDF"}
+            </Button>
+          </div>
+
+          {/* Mobile export */}
+          <div className="flex items-center gap-1.5 lg:hidden">
+            <button
+              onClick={handlePrint}
+              className="flex size-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50"
+            >
+              <IconPrinter size={15} stroke={2} />
+            </button>
+            <button
+              onClick={handleExportPdf}
+              disabled={isExporting}
+              className="flex h-8 items-center gap-1.5 rounded-lg bg-slate-900 px-3 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50"
+            >
+              <IconDownload size={13} stroke={2} />
+              PDF
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* ── Body ── */}
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+
+        {/* Form panel */}
+        <aside className={`no-print flex w-full shrink-0 flex-col overflow-y-auto bg-slate-50 lg:w-[420px] xl:w-[460px] ${mobileTab === "preview" ? "hidden lg:flex" : "flex"}`}>
+          <div className="p-3 sm:p-4">
             <InvoiceForm
               state={state}
               onReset={resetState}
@@ -115,17 +172,56 @@ export default function InvoicePage() {
               onRemoveItem={removeItem}
               onUpdateItem={updateItem}
             />
-          </aside>
+          </div>
+        </aside>
 
-          <section className="invoice-preview-section min-w-0 rounded-3xl border border-black/10 bg-white/65 p-2 backdrop-blur sm:p-3 md:p-4">
-            <p className="no-print mb-2 max-w-xl text-xs font-semibold uppercase tracking-[0.2em] text-black/55">
-              True A4 size on screen (210 × 297 mm). Exported PDF matches this preview — scroll sideways on
-              narrow viewports.
-            </p>
+        {/* Preview panel */}
+        <section className={`invoice-preview-section min-w-0 flex-1 overflow-hidden bg-slate-200 ${mobileTab === "form" ? "hidden lg:flex" : "flex"} flex-col`}>
+          <ScaledPreview>
             <InvoicePreview state={state} previewRef={previewRef} />
-          </section>
-        </div>
-      </section>
-    </main>
+          </ScaledPreview>
+        </section>
+      </div>
+    </div>
+  )
+}
+
+function ScaledPreview({ children }: { children: React.ReactNode }) {
+  const containerRef = React.useRef<HTMLDivElement>(null)
+  const [scale, setScale] = React.useState(1)
+
+  // A4 at 96dpi
+  const A4_W = Math.round((210 / 25.4) * 96)
+  const A4_H = Math.round((297 / 25.4) * 96)
+
+  React.useLayoutEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const calc = () => {
+      const availW = el.clientWidth - 48
+      const availH = el.clientHeight - 48
+      const s = Math.min(1, availW / A4_W, availH / A4_H)
+      setScale(s)
+    }
+    calc()
+    const ro = new ResizeObserver(calc)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [A4_W, A4_H])
+
+  return (
+    <div ref={containerRef} className="flex h-full w-full items-center justify-center overflow-hidden p-6">
+      <div
+        style={{
+          transform: `scale(${scale})`,
+          transformOrigin: "center center",
+          width: A4_W,
+          height: A4_H,
+          flexShrink: 0,
+        }}
+      >
+        {children}
+      </div>
+    </div>
   )
 }
