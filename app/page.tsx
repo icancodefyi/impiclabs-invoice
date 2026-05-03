@@ -41,6 +41,16 @@ export default function HomePage() {
               <p className="mt-3 text-sm font-medium text-violet-700 group-hover:underline">Open →</p>
             </VtLink>
           </li>
+          <li>
+            <Link
+              href="/finance"
+              className="group block rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-sm transition hover:border-zinc-300 hover:shadow-md"
+            >
+              <p className="text-lg font-semibold text-zinc-900">Finance</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">Track revenue, expenses, and profit by month</p>
+              <p className="mt-3 text-sm font-medium text-violet-700 group-hover:underline">Open →</p>
+            </Link>
+          </li>
         </ul>
       </div>
     </main>
