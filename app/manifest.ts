@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Impic Invoice Studio",
-    short_name: "Invoice Studio",
-    description: "Impic Labs internal invoice generator",
-    start_url: "/invoice",
+    name: "Impic HQ",
+    short_name: "Impic HQ",
+    description: "Impic Labs internal tools — invoices, tasks, finance",
+    start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
     theme_color: "#6C5CE7",

@@ -13,12 +13,12 @@ const siteUrl =
 
 export const metadata: Metadata = {
   title: {
-    default: "Impiclabs HQ",
-    template: "%s · Impic Invoice Studio",
+    default: "Impic HQ",
+    template: "%s · Impic HQ",
   },
-  description: "Create A4 invoices, export PDF, and print — Impic Labs internal invoice generator.",
+  description: "Impic Labs internal tools — invoices, tasks, finance.",
   metadataBase: new URL(siteUrl),
-  applicationName: "Impic Invoice Studio",
+  applicationName: "Impic HQ",
   robots: { index: false, follow: false },
   icons: {
     apple: "/assets/logowbg.png",
